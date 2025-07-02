@@ -1,1 +1,13 @@
-CREATE KEYSPACE IF NOT EXISTS notes_maker WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}; 
+CREATE KEYSPACE IF NOT EXISTS notes_maker 
+WITH REPLICATION = {
+    'class': 'NetworkTopologyStrategy',
+    'datacenter1': 1
+};
+USE notes_maker;
+CREATE TABLE IF NOT EXISTS notes (
+    id UUID PRIMARY KEY,
+    title TEXT,
+    content TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);

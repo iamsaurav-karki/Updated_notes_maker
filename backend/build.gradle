@@ -21,7 +21,7 @@ dependencies {
     annotationProcessor platform("io.micronaut.platform:micronaut-platform:4.2.1")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
-    
+    implementation("io.github.cdimascio:dotenv-java:2.3.0") 
     implementation("io.micronaut:micronaut-http-client")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.micronaut:micronaut-jackson-databind")
@@ -39,7 +39,6 @@ dependencies {
     compileOnly("org.graalvm.nativeimage:svm")
     
     runtimeOnly("ch.qos.logback:logback-classic")
-    runtimeOnly("org.yaml:snakeyaml")
 
     implementation("io.micronaut.cassandra:micronaut-cassandra")
 }

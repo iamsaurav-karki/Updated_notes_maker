@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - MICRONAUT_SERVER_HOST=0.0.0.0
+      - MICRONAUT_SERVER_PORT=8080
+      - CASSANDRA_DEFAULT_CONTACT_POINTS=scylladb
+      - CASSANDRA_DEFAULT_PORT=9042
+      - CASSANDRA_DEFAULT_DATACENTER=datacenter1
+      - CASSANDRA_DEFAULT_KEYSPACE=notes_maker
+      - LOG_LEVEL=DEBUG
+    depends_on:
+      scylladb:
+        condition: service_healthy
+    networks:
+      - notes_maker_network
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+      - REACT_APP_ENVIRONMENT=development
+    depends_on:
+      - backend
+    networks:
+      - notes_maker_network
+
+  scylladb:
+    image: scylladb/scylla:5.4
+    ports:
+      - "9042:9042"
+    volumes:
+      - scylla_data:/var/lib/scylla
+      - ./database/init-keyspace.cql:/docker-entrypoint-initdb.d/init-keyspace.cql
+    networks:
+      - notes_maker_network
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'SELECT now() FROM system.local;' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    environment:
+      - SCYLLA_CLUSTER_NAME=notes_maker_cluster
+
+volumes:
+  scylla_data:
+
+networks:
+  notes_maker_network:
+    driver: bridge
