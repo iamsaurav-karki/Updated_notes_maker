@@ -1,0 +1,21 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: linode-public-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.105.36.6/32    
+  - 45.79.121.155/32  
+  autoAssign: true
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: linode-public-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - linode-public-pool
+  interfaces:
+  - eth0 

@@ -41,7 +41,6 @@ services:
       - "9042:9042"
     volumes:
       - scylla_data:/var/lib/scylla
-      - ./database/init-keyspace.cql:/docker-entrypoint-initdb.d/init-keyspace.cql
     networks:
       - notes_maker_network
     healthcheck:
@@ -51,8 +50,7 @@ services:
       retries: 10
       start_period: 60s
     environment:
-      - SCYLLA_CLUSTER_NAME=notes_maker_cluster
-
+      - SCYLLA_CLUSTER_NAME=notes_maker_cluster       
 volumes:
   scylla_data:
 

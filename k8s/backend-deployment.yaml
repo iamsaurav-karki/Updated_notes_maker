@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-backend
+  namespace: notes-maker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-app-backend
+  template:
+    metadata:
+      labels:
+        app: notes-app-backend
+    spec:
+      containers:
+      - name: notes-app-backend
+        image: sauravkarki/notes-backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MICRONAUT_SERVER_HOST
+          value: "0.0.0.0"
+        - name: MICRONAUT_SERVER_PORT
+          value: "8080"
+        - name: MICRONAUT_SERVER_CORS_ENABLED
+          value: "true"
+        - name: MICRONAUT_SERVER_CORS_CONFIGURATIONS_WEB_ALLOWED_ORIGINS
+          value: "https://notes.ksaurav.com.np,https://notes.ksaurav.com.np,https://45.79.121.155:30000,https://localhost:3000,https://172.105.36.6:30000"
+        - name: MICRONAUT_SERVER_CORS_CONFIGURATIONS_WEB_ALLOWED_METHODS
+          value: "GET,POST,PUT,DELETE,OPTIONS"
+        - name: MICRONAUT_SERVER_CORS_CONFIGURATIONS_WEB_ALLOWED_HEADERS
+          value: "Content-Type,Authorization,X-Requested-With"
+        - name: CASSANDRA_DEFAULT_CONTACT_POINTS
+          value: "192.168.148.77,192.168.130.98"
+        - name: CASSANDRA_DEFAULT_PORT
+          value: "9042"
+        - name: CASSANDRA_DEFAULT_DATACENTER
+          value: "DC1"
+        - name: CASSANDRA_DEFAULT_KEYSPACE
+          value: "notes_maker"
+        - name: LOG_LEVEL
+          value: "DEBUG"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"

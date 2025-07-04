@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-backend-service
+  namespace: notes-maker
+spec:
+  selector:
+    app: notes-app-backend
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP
